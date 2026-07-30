@@ -343,6 +343,51 @@
             transform: translateX(-50%) translateY(0);
             opacity: 1;
         }
+        .floating-cart {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--primary);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-lg);
+            cursor: pointer;
+            z-index: 999;
+            transition: all 0.3s ease;
+        }
+
+        .floating-cart:hover {
+            transform: scale(1.05);
+            background: var(--primary-hover);
+        }
+
+        .floating-cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger);
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 700;
+            width: 24px;
+            height: 24px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        @media (min-width: 800px) {
+            .floating-cart {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -377,7 +422,7 @@
                 </div>
             </div>
 
-            <button class="btn" onclick="addToCart()">
+            <button class="btn" onclick="addToCart()" id="addToCartBtn">
                 <i data-lucide="shopping-cart"></i> Add to Cart
             </button>
         </div>
@@ -448,6 +493,11 @@
 
 <div class="toast" id="toastMsg">Added to cart!</div>
 
+<div class="floating-cart" onclick="scrollToCart()" id="floatingCart" style="display: none;">
+    <i data-lucide="shopping-cart"></i>
+    <span class="floating-cart-count" id="floatingCartCount">0</span>
+</div>
+
 <script>
     // Initialize standard icons
     lucide.createIcons();
@@ -471,6 +521,24 @@
         option.innerText = `${item.name} - ₹${item.price} / jar`;
         productSelect.appendChild(option);
     });
+
+    function scrollToCart() {
+        document.getElementById('cartItemsContainer').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function updateProductUI() {
+        const selectedId = productSelect.value;
+        const existingItem = cart.find(item => item.product.id === selectedId);
+        const btn = document.getElementById('addToCartBtn');
+        if (existingItem) {
+            btn.innerHTML = `<i data-lucide="shopping-cart"></i> Add to Cart (${existingItem.qty} in cart)`;
+        } else {
+            btn.innerHTML = `<i data-lucide="shopping-cart"></i> Add to Cart`;
+        }
+        lucide.createIcons();
+    }
+
+    productSelect.addEventListener('change', updateProductUI);
 
     function updateCurrentQty(delta) {
         currentQty += delta;
@@ -549,10 +617,12 @@
         let html = '';
         let subtotalHtml = '';
         let itemsTotal = 0;
+        let totalQty = 0;
 
         cart.forEach(item => {
             const itemTotal = item.product.price * item.qty;
             itemsTotal += itemTotal;
+            totalQty += item.qty;
             
             html += `
                 <div class="cart-item">
@@ -581,6 +651,17 @@
         summarySubtotals.innerHTML = subtotalHtml;
         
         grandTotalDisplay.innerText = `₹${itemsTotal}`;
+        
+        const fab = document.getElementById('floatingCart');
+        const fabCount = document.getElementById('floatingCartCount');
+        if (totalQty > 0) {
+            fab.style.display = 'flex';
+            fabCount.innerText = totalQty;
+        } else {
+            fab.style.display = 'none';
+        }
+
+        updateProductUI();
         
         // Reinitialize icons for newly added HTML
         lucide.createIcons();
