@@ -392,14 +392,12 @@
             </div>
 
             <div class="form-group">
-                <label>Find on Map</label>
-                <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-                    <div style="flex: 1; min-width: 0;">
-                        <input type="text" id="addressInput" placeholder="Search area or landmark...">
-                    </div>
-                    <button onclick="getCurrentLocation()" class="btn" style="width: auto; padding: 0 16px; background: var(--card); border: 2px solid var(--border); color: var(--primary); box-shadow: none;" title="Use Current Location">
-                        <i data-lucide="crosshair" style="width: 20px; height: 20px;"></i>
-                    </button>
+                <label>Set Delivery Location</label>
+                <button onclick="getCurrentLocation()" class="btn" style="margin-bottom: 12px; background: var(--card); border: 2px solid var(--primary); color: var(--primary); box-shadow: none;">
+                    <i data-lucide="crosshair"></i> Use Current Location
+                </button>
+                <div style="margin-bottom: 12px;">
+                    <input type="text" id="addressInput" placeholder="Or search area or landmark...">
                 </div>
                 <div id="map"></div>
                 <div style="font-size: 0.8rem; color: var(--text-muted); text-align: right; margin-top: 6px;">Powered by Google Maps</div>
